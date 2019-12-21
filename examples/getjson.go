@@ -6,13 +6,15 @@ import (
 	"github.com/hoanhan101/request"
 )
 
-type BinResponse struct {
-	Args map[string]string `json:"args"`
-	URL  string            `json:"url"`
+type Response struct {
+	Args    map[string]interface{} `json:"args"`
+	Headers map[string]interface{} `json:"headers"`
+	Origin  string                 `json:"origin"`
+	URL     string                 `json:"url"`
 }
 
 func main() {
-	r := new(BinResponse)
+	r := new(Response)
 
 	err := request.GetJSON("https://httpbin.org/get", nil, r)
 	if err != nil {
