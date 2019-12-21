@@ -36,7 +36,7 @@ err := request.GetJSON("https://httpbin.org/get", payload, r)
 
 ### String response
 
-[](examples/post.go)
+[With request body](examples/post.go)
 ```go
 payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
 r, err := request.Post("https://httpbin.org/get", payload)
@@ -44,7 +44,7 @@ r, err := request.Post("https://httpbin.org/get", payload)
 
 ### JSON response
 
-[](examples/postjson.go)
+[With request body](examples/postjson.go)
 ```go
 r := new(Response)
 payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
