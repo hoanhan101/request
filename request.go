@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
-func Get(url string) (string, error) {
-	res, err := http.Get(url)
+func Get(address string, params map[string]string) (string, error) {
+	res, err := get(address, params)
 	if err != nil {
 		return "", err
 	}
@@ -21,8 +22,8 @@ func Get(url string) (string, error) {
 	return string(raw), nil
 }
 
-func GetJSON(url string, scheme interface{}) error {
-	res, err := http.Get(url)
+func GetJSON(address string, params map[string]string, scheme interface{}) error {
+	res, err := get(address, params)
 	if err != nil {
 		return err
 	}
@@ -35,4 +36,25 @@ func GetJSON(url string, scheme interface{}) error {
 	}
 
 	return nil
+}
+
+func get(address string, params map[string]string) (*http.Response, error) {
+	u, err := url.Parse(address)
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+	for k, v := range params {
+		q.Set(k, v)
+	}
+
+	u.RawQuery = q.Encode()
+
+	res, err := http.Get(u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

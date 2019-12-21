@@ -6,16 +6,11 @@ import (
 	"github.com/hoanhan101/request"
 )
 
-type BinResponse struct {
-	URL string `json:"url"`
-}
-
 func main() {
-	r := new(BinResponse)
-	err := request.GetJSON("https://httpbin.org/get", r)
+	r, err := request.Get("https://httpbin.org/get", nil)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(r.URL)
+	fmt.Printf("%+v\n", r)
 }
