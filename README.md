@@ -13,7 +13,7 @@ r, err := request.Get("https://httpbin.org/get", nil)
 
 [With query parameters](examples/getparams.go)
 ```go
-payload := map[string]string{"k1": "v1", "k2": "v2"}
+payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
 r, err := request.Get("https://httpbin.org/get", payload)
 ```
 
@@ -28,5 +28,6 @@ err := request.GetJSON("https://httpbin.org/get", nil, r)
 [With query parameters](examples/getjsonparams.go)
 ```go
 r := new(BinResponse)
+payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
 err := request.GetJSON("https://httpbin.org/get", payload, r)
 ```

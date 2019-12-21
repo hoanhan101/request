@@ -7,13 +7,13 @@ import (
 )
 
 type BinResponse struct {
-	Args map[string]string `json:"args"`
-	URL  string            `json:"url"`
+	Args map[string]interface{} `json:"args"`
+	URL  string                 `json:"url"`
 }
 
 func main() {
 	r := new(BinResponse)
-	payload := map[string]string{"k1": "v1", "k2": "v2"}
+	payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
 
 	err := request.GetJSON("https://httpbin.org/get", payload, r)
 	if err != nil {
