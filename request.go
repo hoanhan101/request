@@ -15,7 +15,7 @@ import (
 //  r, err := request.Get("http://localhost:8000", nil)
 //
 //  // With query parameters
-//  r, err := request.Get("http://localhost:8000",  map[string]string{"k1": "v1", "k2": "v2"})
+//  r, err := request.Get("http://localhost:8000",  map[string]string{"k1": "v1"})
 func Get(address string, params map[string]string) (string, error) {
 	res, err := get(address, params)
 	if err != nil {
@@ -45,7 +45,7 @@ func Get(address string, params map[string]string) (string, error) {
 //
 //  // With query parameters
 //  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1", "k2": "v2"}, r)
+//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, r)
 func GetJSON(address string, params map[string]string, scheme interface{}) error {
 	res, err := get(address, params)
 	if err != nil {
@@ -70,7 +70,7 @@ func GetJSON(address string, params map[string]string, scheme interface{}) error
 //  r, err := request.Post("http://localhost:8000", nil)
 //
 //  // With post body
-//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1", "k2": "v2"})
+//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"})
 func Post(address string, body map[string]string) (string, error) {
 	res, err := post(address, body)
 	if err != nil {
@@ -95,10 +95,12 @@ func Post(address string, body map[string]string) (string, error) {
 //  }
 //
 //  // No post body
-//  r, err := request.PostJSON("http://localhost:8000", nil)
+//  r := new(Response)
+//  err := request.PostJSON("http://localhost:8000", nil, r)
 //
 //  // With post body
-//  r, err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1", "k2": "v2"})
+//  r := new(Response)
+//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, r)
 func PostJSON(address string, body map[string]string, scheme interface{}) error {
 	res, err := post(address, body)
 	if err != nil {
