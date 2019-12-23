@@ -34,24 +34,24 @@ func post(url string, body map[string]string) (*Response, error) {
 	return r, nil
 }
 
-func logError(err error) {
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
 func main() {
 	r, err := get(
 		"http://localhost:8000/get",
 		map[string]string{"k1": "v1", "k2": "v2"},
 	)
-	logError(err)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	fmt.Printf("%+v\n", r)
 
 	r, err = post(
 		"http://localhost:8000/post",
 		map[string]string{"k1": "v1", "k2": "v2"},
 	)
-	logError(err)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	fmt.Printf("%+v\n", r)
 }
