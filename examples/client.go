@@ -6,6 +6,7 @@ import (
 	"github.com/hoanhan101/request"
 )
 
+// Response is a sample response.
 type Response struct {
 	Status string      `json:"status"`
 	Method string      `json:"method"`
