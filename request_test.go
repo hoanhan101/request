@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type Reponse struct {
+type Response struct {
 	Status string            `json:"status"`
 	Query  map[string]string `json:"query"`
 }
@@ -42,12 +42,12 @@ func TestGetJSON(t *testing.T) {
 	url, closer := requesttest.Serve("/get", `{"status":"ok"}`)
 	defer closer()
 
-	r := new(Reponse)
+	r := new(Response)
 	err := GetJSON(url, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		&Reponse{
+		&Response{
 			Status: "ok",
 		},
 		r,
@@ -58,12 +58,12 @@ func TestGetJSONQuery(t *testing.T) {
 	url, closer := requesttest.Serve("/get", `{"status":"ok","query":{"k1":"v1"}}`)
 	defer closer()
 
-	r := new(Reponse)
+	r := new(Response)
 	err := GetJSON(url, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		&Reponse{
+		&Response{
 			Status: "ok",
 			Query:  map[string]string{"k1": "v1"},
 		},
@@ -101,12 +101,12 @@ func TestPostJSON(t *testing.T) {
 	url, closer := requesttest.Serve("/post", `{"status":"ok"}`)
 	defer closer()
 
-	r := new(Reponse)
+	r := new(Response)
 	err := PostJSON(url, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		&Reponse{
+		&Response{
 			Status: "ok",
 		},
 		r,
@@ -117,12 +117,12 @@ func TestPostJSONQuery(t *testing.T) {
 	url, closer := requesttest.Serve("/post", `{"status":"ok","query":{"k1":"v1"}}`)
 	defer closer()
 
-	r := new(Reponse)
+	r := new(Response)
 	err := PostJSON(url, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		&Reponse{
+		&Response{
 			Status: "ok",
 			Query:  map[string]string{"k1": "v1"},
 		},
