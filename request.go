@@ -35,10 +35,6 @@ func Get(address string, params map[string]string) (string, error) {
 // in JSON.
 //
 // For example:
-//  type Response struct {
-//      Status string `json:"status"`
-//  }
-//
 //  // No query parameters
 //  r := new(Response)
 //  err := request.GetJSON("http://localhost:8000", nil, r)
@@ -90,10 +86,6 @@ func Post(address string, body map[string]string) (string, error) {
 // in JSON.
 //
 // For example:
-//  type Response struct {
-//      Status string `json:"status"`
-//  }
-//
 //  // No post body
 //  r := new(Response)
 //  err := request.PostJSON("http://localhost:8000", nil, r)
