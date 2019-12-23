@@ -8,10 +8,13 @@ import (
 )
 
 // Get issues a GET request to a given URL address and formats the response in
-// string. For example:
-// No query parameters
+// string.
+//
+// For example:
+//  // No query parameters
 //  r, err := request.Get("https://httpbin.org/get", nil)
-// With query parameters
+//
+//  // With query parameters
 //  payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
 //  r, err := request.Get("https://httpbin.org/get", payload)
 func Get(address string, params map[string][]string) (string, error) {
