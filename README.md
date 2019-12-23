@@ -13,7 +13,7 @@ String response
 r, err := request.Get("http://localhost:8000", nil)
 
 With query parameters
-r, err := request.Get("http://localhost:8000",  map[string]string{"k1": "v1"})
+r, err := request.Get("http://localhost:8000", map[string]string{"k1": "v1"})
 ```
 
 JSON response
