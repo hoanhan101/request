@@ -12,11 +12,11 @@ import (
 //
 // For example:
 //  // No query parameters
-//  r, err := request.Get("https://httpbin.org/get", nil)
+//  r, err := request.Get("http://localhost:8000", nil)
 //
 //  // With query parameters
 //  payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
-//  r, err := request.Get("https://httpbin.org/get", payload)
+//  r, err := request.Get("http://localhost:8000", payload)
 func Get(address string, params map[string][]string) (string, error) {
 	res, err := get(address, params)
 	if err != nil {
@@ -34,6 +34,20 @@ func Get(address string, params map[string][]string) (string, error) {
 
 // GetJSON issues a GET request to a given URL address and formats the response
 // in JSON.
+//
+// For example:
+//  type Response struct {
+//      Status string `json:"status"`
+//  }
+//
+//  // No query parameters
+//  r := new(Response)
+//  err := request.GetJSON("http://localhost:8000", nil, r)
+//
+//  // With query parameters
+//  r := new(Response)
+//  payload := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
+//  err := request.GetJSON("http://localhost:8000", payload, r)
 func GetJSON(address string, params map[string][]string, scheme interface{}) error {
 	res, err := get(address, params)
 	if err != nil {
@@ -52,6 +66,14 @@ func GetJSON(address string, params map[string][]string, scheme interface{}) err
 
 // Post issues a POST request to a given URL address and formats the response
 // in string.
+//
+// For example:
+//  // No post body
+//  r, err := request.Post("http://localhost:8000", nil)
+//
+//  // With post body
+//  body := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
+//  r, err := request.Post("http://localhost:8000", body)
 func Post(address string, body map[string][]string) (string, error) {
 	res, err := post(address, body)
 	if err != nil {
@@ -69,6 +91,18 @@ func Post(address string, body map[string][]string) (string, error) {
 
 // PostJSON issues a POST request to a given URL address and formats the response
 // in JSON.
+//
+// For example:
+//  type Response struct {
+//      Status string `json:"status"`
+//  }
+//
+//  // No post body
+//  r, err := request.PostJSON("http://localhost:8000", nil)
+//
+//  // With post body
+//  body := map[string][]string{"k1": []string{"v1"}, "k2": []string{"v2", "v3"}}
+//  r, err := request.PostJSON("http://localhost:8000", body)
 func PostJSON(address string, body map[string][]string, scheme interface{}) error {
 	res, err := post(address, body)
 	if err != nil {
