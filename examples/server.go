@@ -7,14 +7,33 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-func test(c echo.Context) error {
+func get(c echo.Context) error {
 	return c.JSON(
 		http.StatusOK,
-		map[string]string{
+		map[string]interface{}{
 			"status": "ok",
+			"method": "GET",
+			"path":   c.Path(),
+			"query":  c.QueryString(),
 		},
 	)
+}
 
+func post(c echo.Context) error {
+	m := map[string]interface{}{}
+	if err := c.Bind(&m); err != nil {
+		return err
+	}
+
+	return c.JSON(
+		http.StatusOK,
+		map[string]interface{}{
+			"status": "ok",
+			"method": "POST",
+			"path":   c.Path(),
+			"query":  m,
+		},
+	)
 }
 
 func main() {
@@ -23,7 +42,8 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/test", test)
+	e.GET("/get", get)
+	e.POST("/post", post)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":8000"))
 }
