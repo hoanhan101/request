@@ -2,172 +2,91 @@ package request
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-// Get issues a GET request to a given URL address and formats the response in
-// string.
-//
-// For example:
-//  // No query parameters
-//  r, err := request.Get("http://localhost:8000", nil, nil)
-//
-//  // With query parameters
-//  r, err := request.Get("http://localhost:8000", map[string]string{"k1": "v1"}, nil)
-
-//  // With authentication
-//  r, err := request.Get("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"})
-func Get(address string, params, auth map[string]string) (string, error) {
-	res, err := get(address, params, auth)
-	if err != nil {
-		return "", err
-	}
-
-	raw, err := ioutil.ReadAll(res.Body)
-	defer res.Body.Close()
-	if err != nil {
-		return "", err
-	}
-
-	return string(raw), nil
+// Options is the config options for a request.
+type Options struct {
+	URL     string
+	Payload map[string]string
+	Auth    map[string]string
 }
 
-// GetJSON issues a GET request to a given URL address and formats the response
-// in JSON.
-//
-// For example:
-//  // No query parameters
-//  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", nil, nil, r)
-//
-//  // With query parameters
-//  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, nil, r)
-
-//  // With authentication
-//  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"}, r)
-func GetJSON(address string, params, auth map[string]string, scheme interface{}) error {
-	res, err := get(address, params, auth)
-	if err != nil {
-		return err
-	}
-
-	defer res.Body.Close()
-
-	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&scheme); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Post issues a POST request to a given URL address and formats the response
-// in string.
-//
-// For example:
-//  // No post body
-//  r, err := request.Post("http://localhost:8000", nil, nil)
-//
-//  // With post body
-//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"}, nil)
-//
-//  // With authentication
-//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"})
-func Post(address string, body, auth map[string]string) (string, error) {
-	res, err := post(address, body, auth)
-	if err != nil {
-		return "", err
-	}
-
-	raw, err := ioutil.ReadAll(res.Body)
-	defer res.Body.Close()
-	if err != nil {
-		return "", err
-	}
-
-	return string(raw), nil
-}
-
-// PostJSON issues a POST request to a given URL address and formats the response
-// in JSON.
-//
-// For example:
-//  // No post body
-//  r := new(Response)
-//  err := request.PostJSON("http://localhost:8000", nil, nil, r)
-//
-//  // With post body
-//  r := new(Response)
-//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, nil, r)
-//
-//  // With authentication
-//  r := new(Response)
-//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"}, r)
-func PostJSON(address string, body, auth map[string]string, scheme interface{}) error {
-	res, err := post(address, body, auth)
-	if err != nil {
-		return err
-	}
-
-	defer res.Body.Close()
-
-	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&scheme); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func get(address string, params, auth map[string]string) (*http.Response, error) {
-	u, err := url.Parse(address)
+// Get issues a GET to the specified URL
+func Get(opts *Options) (*http.Response, error) {
+	u, err := url.Parse(opts.URL)
 	if err != nil {
 		return nil, err
 	}
 
 	q := u.Query()
-	for k, v := range params {
+	for k, v := range opts.Payload {
 		q.Set(k, v)
 	}
 
 	u.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	for username, password := range auth {
-		req.SetBasicAuth(username, password)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+	return request(opts, "GET", u.String(), nil)
 }
 
-func post(address string, body, auth map[string]string) (*http.Response, error) {
+// GetJSON issues a GET to the specified URL and marshals the output in JSON.
+func GetJSON(opts *Options, output interface{}) error {
+	resp, err := Get(opts)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&output); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Post issues a POST to the specified URL
+func Post(opts *Options) (*http.Response, error) {
 	q := url.Values{}
-	for k, v := range body {
+	for k, v := range opts.Payload {
 		q.Set(k, v)
 	}
 
-	req, err := http.NewRequest("POST", address, strings.NewReader(q.Encode()))
+	return request(opts, "POST", opts.URL, strings.NewReader(q.Encode()))
+}
+
+// PostJSON issues a POST to the specified URL and marshals the output in JSON.
+func PostJSON(opts *Options, output interface{}) error {
+	resp, err := Post(opts)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&output); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func request(opts *Options, method, url string, body io.Reader) (*http.Response, error) {
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	if method == "POST" {
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
 
-	for username, password := range auth {
+	for username, password := range opts.Auth {
 		req.SetBasicAuth(username, password)
 	}
 
