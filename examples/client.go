@@ -16,7 +16,7 @@ type Response struct {
 func get(url string, param map[string]string) (*Response, error) {
 	r := new(Response)
 
-	err := request.GetJSON(url, param, r)
+	err := request.GetJSON(url, param, nil, r)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func get(url string, param map[string]string) (*Response, error) {
 func post(url string, body map[string]string) (*Response, error) {
 	r := new(Response)
 
-	err := request.PostJSON(url, body, r)
+	err := request.PostJSON(url, body, nil, r)
 	if err != nil {
 		return nil, err
 	}

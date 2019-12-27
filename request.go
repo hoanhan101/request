@@ -165,6 +165,8 @@ func post(address string, body, auth map[string]string) (*http.Response, error) 
 		return nil, err
 	}
 
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
 	for username, password := range auth {
 		req.SetBasicAuth(username, password)
 	}
@@ -175,11 +177,4 @@ func post(address string, body, auth map[string]string) (*http.Response, error) 
 	}
 
 	return resp, nil
-
-	// res, err := http.PostForm(address, q)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return res, nil
 }

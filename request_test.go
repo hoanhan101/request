@@ -16,7 +16,7 @@ func TestGet(t *testing.T) {
 	url, closer := requesttest.Serve("/get", `{"status":"ok"}`)
 	defer closer()
 
-	r, err := Get(url, nil)
+	r, err := Get(url, nil, nil)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -29,7 +29,7 @@ func TestGetQuery(t *testing.T) {
 	url, closer := requesttest.Serve("/get", `{"status":"ok","query":{"k1":"v1"}}`)
 	defer closer()
 
-	r, err := Get(url, map[string]string{"k1": "v1"})
+	r, err := Get(url, map[string]string{"k1": "v1"}, nil)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -43,7 +43,7 @@ func TestGetJSON(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := GetJSON(url, nil, r)
+	err := GetJSON(url, nil, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -59,7 +59,7 @@ func TestGetJSONQuery(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := GetJSON(url, nil, r)
+	err := GetJSON(url, nil, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -75,7 +75,7 @@ func TestPost(t *testing.T) {
 	url, closer := requesttest.Serve("/post", `{"status":"ok"}`)
 	defer closer()
 
-	r, err := Post(url, nil)
+	r, err := Post(url, nil, nil)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -88,7 +88,7 @@ func TestPostQuery(t *testing.T) {
 	url, closer := requesttest.Serve("/post", `{"status":"ok","query":{"k1":"v1"}}`)
 	defer closer()
 
-	r, err := Post(url, nil)
+	r, err := Post(url, nil, nil)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -102,7 +102,7 @@ func TestPostJSON(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := PostJSON(url, nil, r)
+	err := PostJSON(url, nil, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -118,7 +118,7 @@ func TestPostJSONQuery(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := PostJSON(url, nil, r)
+	err := PostJSON(url, nil, nil, r)
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
