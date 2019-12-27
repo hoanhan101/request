@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Get issues a GET request to a given URL address and formats the response in
@@ -12,12 +13,15 @@ import (
 //
 // For example:
 //  // No query parameters
-//  r, err := request.Get("http://localhost:8000", nil)
+//  r, err := request.Get("http://localhost:8000", nil, nil)
 //
 //  // With query parameters
-//  r, err := request.Get("http://localhost:8000",  map[string]string{"k1": "v1"})
-func Get(address string, params map[string]string) (string, error) {
-	res, err := get(address, params)
+//  r, err := request.Get("http://localhost:8000", map[string]string{"k1": "v1"}, nil)
+
+//  // With authentication
+//  r, err := request.Get("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"})
+func Get(address string, params, auth map[string]string) (string, error) {
+	res, err := get(address, params, auth)
 	if err != nil {
 		return "", err
 	}
@@ -37,13 +41,17 @@ func Get(address string, params map[string]string) (string, error) {
 // For example:
 //  // No query parameters
 //  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", nil, r)
+//  err := request.GetJSON("http://localhost:8000", nil, nil, r)
 //
 //  // With query parameters
 //  r := new(Response)
-//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, r)
-func GetJSON(address string, params map[string]string, scheme interface{}) error {
-	res, err := get(address, params)
+//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, nil, r)
+
+//  // With authentication
+//  r := new(Response)
+//  err := request.GetJSON("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"}, r)
+func GetJSON(address string, params, auth map[string]string, scheme interface{}) error {
+	res, err := get(address, params, auth)
 	if err != nil {
 		return err
 	}
@@ -63,12 +71,15 @@ func GetJSON(address string, params map[string]string, scheme interface{}) error
 //
 // For example:
 //  // No post body
-//  r, err := request.Post("http://localhost:8000", nil)
+//  r, err := request.Post("http://localhost:8000", nil, nil)
 //
 //  // With post body
-//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"})
-func Post(address string, body map[string]string) (string, error) {
-	res, err := post(address, body)
+//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"}, nil)
+//
+//  // With authentication
+//  r, err := request.Post("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"})
+func Post(address string, body, auth map[string]string) (string, error) {
+	res, err := post(address, body, auth)
 	if err != nil {
 		return "", err
 	}
@@ -88,13 +99,17 @@ func Post(address string, body map[string]string) (string, error) {
 // For example:
 //  // No post body
 //  r := new(Response)
-//  err := request.PostJSON("http://localhost:8000", nil, r)
+//  err := request.PostJSON("http://localhost:8000", nil, nil, r)
 //
 //  // With post body
 //  r := new(Response)
-//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, r)
-func PostJSON(address string, body map[string]string, scheme interface{}) error {
-	res, err := post(address, body)
+//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, nil, r)
+//
+//  // With authentication
+//  r := new(Response)
+//  err := request.PostJSON("http://localhost:8000", map[string]string{"k1": "v1"}, map[string]string{"username":"password"}, r)
+func PostJSON(address string, body, auth map[string]string, scheme interface{}) error {
+	res, err := post(address, body, auth)
 	if err != nil {
 		return err
 	}
@@ -109,7 +124,7 @@ func PostJSON(address string, body map[string]string, scheme interface{}) error 
 	return nil
 }
 
-func get(address string, params map[string]string) (*http.Response, error) {
+func get(address string, params, auth map[string]string) (*http.Response, error) {
 	u, err := url.Parse(address)
 	if err != nil {
 		return nil, err
@@ -122,24 +137,49 @@ func get(address string, params map[string]string) (*http.Response, error) {
 
 	u.RawQuery = q.Encode()
 
-	res, err := http.Get(u.String())
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	for username, password := range auth {
+		req.SetBasicAuth(username, password)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
-func post(address string, body map[string]string) (*http.Response, error) {
+func post(address string, body, auth map[string]string) (*http.Response, error) {
 	q := url.Values{}
 	for k, v := range body {
 		q.Set(k, v)
 	}
 
-	res, err := http.PostForm(address, q)
+	req, err := http.NewRequest("POST", address, strings.NewReader(q.Encode()))
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	for username, password := range auth {
+		req.SetBasicAuth(username, password)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+
+	// res, err := http.PostForm(address, q)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return res, nil
 }
