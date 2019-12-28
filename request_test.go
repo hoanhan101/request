@@ -7,13 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Response describes a response from requesttest.Echo().
 type Response struct {
-	Status  string            `json:"status"`
-	Payload map[string]string `json:"payload"`
+	Method  string `json:"method"`
+	Payload string `json:"form"`
 }
 
 func TestGetJSON(t *testing.T) {
-	url, closer := requesttest.Serve("/get", `{"status":"ok"}`)
+	url, closer := requesttest.Echo()
 	defer closer()
 
 	r := new(Response)
@@ -27,22 +28,22 @@ func TestGetJSON(t *testing.T) {
 	assert.Equal(
 		t,
 		&Response{
-			Status: "ok",
+			Method:  "GET",
+			Payload: "",
 		},
 		r,
 	)
 }
 
 func TestGetJSONQuery(t *testing.T) {
-	url, closer := requesttest.Serve("/get", `{"status":"ok","payload":{"k1":"v1"}}`)
+	url, closer := requesttest.Echo()
 	defer closer()
 
 	r := new(Response)
 	err := GetJSON(
 		&Options{
-			URL: url,
-			// FIMXE - make test server echo payload
-			// Payload: map[string]string{"k1": "v1"}
+			URL:     url,
+			Payload: map[string]string{"k1": "v1", "k2": "v2"},
 		},
 		r,
 	)
@@ -50,15 +51,15 @@ func TestGetJSONQuery(t *testing.T) {
 	assert.Equal(
 		t,
 		&Response{
-			Status:  "ok",
-			Payload: map[string]string{"k1": "v1"},
+			Method:  "GET",
+			Payload: "k1=v1&k2=v2",
 		},
 		r,
 	)
 }
 
 func TestPostJSON(t *testing.T) {
-	url, closer := requesttest.Serve("/post", `{"status":"ok"}`)
+	url, closer := requesttest.Echo()
 	defer closer()
 
 	r := new(Response)
@@ -72,31 +73,31 @@ func TestPostJSON(t *testing.T) {
 	assert.Equal(
 		t,
 		&Response{
-			Status: "ok",
+			Method:  "POST",
+			Payload: "",
 		},
 		r,
 	)
 }
 
 func TestPostJSONQuery(t *testing.T) {
-	url, closer := requesttest.Serve("/post", `{"status":"ok","payload":{"k1":"v1"}}`)
+	url, closer := requesttest.Echo()
 	defer closer()
 
 	r := new(Response)
 	err := PostJSON(
 		&Options{
-			URL: url,
-			// Payload: map[string]string{"k1": "v1"},
+			URL:     url,
+			Payload: map[string]string{"k1": "v1", "k2": "v2"},
 		},
 		r,
 	)
-
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
 		&Response{
-			Status:  "ok",
-			Payload: map[string]string{"k1": "v1"},
+			Method:  "POST",
+			Payload: "k1=v1&k2=v2",
 		},
 		r,
 	)
