@@ -1,8 +1,9 @@
-package request
+package request_test
 
 import (
 	"testing"
 
+	"github.com/hoanhan101/request"
 	"github.com/hoanhan101/requesttest"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,8 +19,8 @@ func TestGetJSON(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := GetJSON(
-		&Options{
+	err := request.GetJSON(
+		&request.Options{
 			URL: url,
 		},
 		r,
@@ -40,8 +41,8 @@ func TestGetJSONQuery(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := GetJSON(
-		&Options{
+	err := request.GetJSON(
+		&request.Options{
 			URL:     url,
 			Payload: map[string]string{"k1": "v1", "k2": "v2"},
 		},
@@ -63,8 +64,8 @@ func TestPostJSON(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := PostJSON(
-		&Options{
+	err := request.PostJSON(
+		&request.Options{
 			URL: url,
 		},
 		r,
@@ -85,8 +86,8 @@ func TestPostJSONQuery(t *testing.T) {
 	defer closer()
 
 	r := new(Response)
-	err := PostJSON(
-		&Options{
+	err := request.PostJSON(
+		&request.Options{
 			URL:     url,
 			Payload: map[string]string{"k1": "v1", "k2": "v2"},
 		},
