@@ -17,19 +17,7 @@ type Options struct {
 
 // Get issues a GET to the specified URL
 func Get(opts *Options) (*http.Response, error) {
-	u, err := url.Parse(opts.URL)
-	if err != nil {
-		return nil, err
-	}
-
-	q := u.Query()
-	for k, v := range opts.Payload {
-		q.Set(k, v)
-	}
-
-	u.RawQuery = q.Encode()
-
-	return request(opts, "GET", u.String(), nil)
+	return request(opts, "GET")
 }
 
 // GetJSON issues a GET to the specified URL and marshals the output in JSON.
@@ -39,24 +27,12 @@ func GetJSON(opts *Options, output interface{}) error {
 		return err
 	}
 
-	defer resp.Body.Close()
-
-	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&output); err != nil {
-		return err
-	}
-
-	return nil
+	return decode(resp, output)
 }
 
 // Post issues a POST to the specified URL
 func Post(opts *Options) (*http.Response, error) {
-	q := url.Values{}
-	for k, v := range opts.Payload {
-		q.Set(k, v)
-	}
-
-	return request(opts, "POST", opts.URL, strings.NewReader(q.Encode()))
+	return request(opts, "POST")
 }
 
 // PostJSON issues a POST to the specified URL and marshals the output in JSON.
@@ -66,25 +42,34 @@ func PostJSON(opts *Options, output interface{}) error {
 		return err
 	}
 
-	defer resp.Body.Close()
-
-	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&output); err != nil {
-		return err
-	}
-
-	return nil
+	return decode(resp, output)
 }
 
-func request(opts *Options, method, url string, body io.Reader) (*http.Response, error) {
-	req, err := http.NewRequest(method, url, body)
+func request(opts *Options, method string) (*http.Response, error) {
+	var body io.Reader
+
+	u, err := url.Parse(opts.URL)
 	if err != nil {
 		return nil, err
 	}
 
-	if method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	q := url.Values{}
+	for k, v := range opts.Payload {
+		q.Set(k, v)
 	}
+
+	if method == "GET" {
+		u.RawQuery = q.Encode()
+	} else if method == "POST" {
+		body = strings.NewReader(q.Encode())
+	}
+
+	req, err := http.NewRequest(method, u.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	for username, password := range opts.Auth {
 		req.SetBasicAuth(username, password)
@@ -96,4 +81,15 @@ func request(opts *Options, method, url string, body io.Reader) (*http.Response,
 	}
 
 	return resp, nil
+}
+
+func decode(resp *http.Response, output interface{}) error {
+	defer resp.Body.Close()
+
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&output); err != nil {
+		return err
+	}
+
+	return nil
 }
