@@ -10,7 +10,7 @@ import (
 // Response describes a response from requesttest.Echo().
 type Response struct {
 	Method  string `json:"method"`
-	Payload string `json:"form"`
+	Payload string `json:"payload"`
 }
 
 func TestGetJSON(t *testing.T) {
