@@ -15,7 +15,7 @@ type Options struct {
 	Auth    map[string]string
 }
 
-// Get issues a GET to the specified URL
+// Get issues a GET to the specified URL.
 func Get(opts *Options) (*http.Response, error) {
 	return request(opts, "GET")
 }
@@ -30,7 +30,7 @@ func GetJSON(opts *Options, output interface{}) error {
 	return decode(resp, output)
 }
 
-// Post issues a POST to the specified URL
+// Post issues a POST to the specified URL.
 func Post(opts *Options) (*http.Response, error) {
 	return request(opts, "POST")
 }
