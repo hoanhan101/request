@@ -11,10 +11,9 @@ func get(c echo.Context) error {
 	return c.JSON(
 		http.StatusOK,
 		map[string]interface{}{
-			"status": "ok",
-			"method": "GET",
-			"path":   c.Path(),
-			"query":  c.QueryString(),
+			"method":  "GET",
+			"path":    c.Path(),
+			"payload": c.QueryString(),
 		},
 	)
 }
@@ -28,10 +27,9 @@ func post(c echo.Context) error {
 	return c.JSON(
 		http.StatusOK,
 		map[string]interface{}{
-			"status": "ok",
-			"method": "POST",
-			"path":   c.Path(),
-			"query":  m,
+			"method":  "POST",
+			"path":    c.Path(),
+			"payload": m,
 		},
 	)
 }

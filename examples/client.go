@@ -8,9 +8,9 @@ import (
 
 // Response is a sample response.
 type Response struct {
-	Status string      `json:"status"`
-	Method string      `json:"method"`
-	Query  interface{} `json:"query"`
+	Status  string      `json:"status"`
+	Method  string      `json:"method"`
+	Payload interface{} `json:"payload"`
 }
 
 func main() {
