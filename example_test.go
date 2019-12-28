@@ -7,7 +7,7 @@ import (
 	"github.com/hoanhan101/requesttest"
 )
 
-func ExampleGetJSON() {
+func ExampleGetJSON_no_query_parameters() {
 	url, closer := requesttest.Echo()
 	defer closer()
 
@@ -27,7 +27,7 @@ func ExampleGetJSON() {
 	// Output: &{Method:GET Payload:}
 }
 
-func ExampleGetJSON_query() {
+func ExampleGetJSON_with_query_parameters() {
 	url, closer := requesttest.Echo()
 	defer closer()
 
@@ -48,7 +48,7 @@ func ExampleGetJSON_query() {
 	// Output: &{Method:GET Payload:k1=v1&k2=v2}
 }
 
-func ExamplePostJSON() {
+func ExamplePostJSON_no_query_parameters() {
 	url, closer := requesttest.Echo()
 	defer closer()
 
@@ -68,7 +68,7 @@ func ExamplePostJSON() {
 	// Output: &{Method:POST Payload:}
 }
 
-func ExamplePostJSON_query() {
+func ExamplePostJSON_with_query_parameters() {
 	url, closer := requesttest.Echo()
 	defer closer()
 
