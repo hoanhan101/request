@@ -68,7 +68,7 @@ func ExamplePostJSON_noQueryParameters() {
 	// Output: &{Method:POST Payload:}
 }
 
-func ExamplePostJSON_withQueryParameters() {
+func ExamplePostJSON_with_query_parameters() {
 	url, closer := requesttest.Echo()
 	defer closer()
 
